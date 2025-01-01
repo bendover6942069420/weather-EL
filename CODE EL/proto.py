@@ -2,14 +2,15 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-df = pd.read_csv("C:/Users/User/OneDrive/Desktop/miscellanous college shit/2ND YEAR/experential learning/seattle-weather.csv")
+df = pd.read_csv("seattle-weather.csv")
 df.head()
 df.isnull().sum()
 df.duplicated().sum()
 #coulmn Open converted into numpy array
-training_set = df.iloc[:,2:3].values
+training_set = df.iloc[:,1:2].values
 training_set
 len(training_set)
+#initialises the training models and adds it into the numpy array
 def df_to_XY(df,window_size=10):
  X_train=[]
  y_train=[]
@@ -22,8 +23,8 @@ def df_to_XY(df,window_size=10):
  return X_train, y_train
 
 WINDOW = 10
-X,y = df_to_XY(df,WINDOW)
-print(len(X),len(y))
+X, y = df_to_XY(df, WINDOW)
+print(len(X), len(y))
 X_train = X[:800]
 y_train = y[:800]
 X_val = X[800:1000]
@@ -84,12 +85,28 @@ df_pred.columns=["actual"]
 df_pred = df_pred[WINDOW:]
 df_pred["predicted"] = pred
 
-fig,axes = plt.subplots(2,1,figsize=(14,8),dpi=400)
+fig, axes = plt.subplots(2, 1, figsize=(16, 10), dpi=400)
 
-plt.subplot(2,1,1)
+# Validation Results
+plt.subplot(2, 1, 1)
 plt.title("Validation Results")
-sns.lineplot(df_pred[800:],alpha=0.8,palette="flare",linestyle=None);
+print("Validation Data:", df_pred[800:])
+sns.lineplot(data=df_pred[800:], x=df_pred.index[800:], y='actual', label='Actual', alpha=0.8, palette="viridis", linestyle='-');
+sns.lineplot(data=df_pred[800:], x=df_pred.index[800:], y='predicted', label='Predicted', alpha=0.8, palette="flare", linestyle='--');
+plt.xlabel("Time Steps")
+plt.ylabel("Temperature")
+plt.legend()
+plt.grid(True)
+plt.show()
 
-plt.subplot(2,1,2)
+# Test Results
+plt.subplot(2, 1, 2)
 plt.title("Test Results")
-sns.lineplot(df_pred[1000:],alpha=0.8,palette="flare",linestyle=None);
+print("Test Data:", df_pred[1000:])
+sns.lineplot(data=df_pred[1000:], x=df_pred.index[1000:], y='actual', label='Actual', alpha=0.8, palette="viridis", linestyle='-');
+sns.lineplot(data=df_pred[1000:], x=df_pred.index[1000:], y='predicted', label='Predicted', alpha=0.8, palette="flare", linestyle='--');
+plt.xlabel("Time Steps")
+plt.ylabel("Temperature")
+plt.legend()
+plt.grid(True)
+plt.show()
